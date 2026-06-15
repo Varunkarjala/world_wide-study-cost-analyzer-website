@@ -90,14 +90,47 @@ const txtCrudVisa = document.getElementById('txtCrudVisa');
 const txtCrudInsurance = document.getElementById('txtCrudInsurance');
 const txtCrudExchange = document.getElementById('txtCrudExchange');
 
+// Page View & Auth Form Elements
+const landingPage = document.getElementById('landingPage');
+const dashboardPage = document.getElementById('dashboardPage');
+const authModal = document.getElementById('authModal');
+const btnNavSignIn = document.getElementById('btnNavSignIn');
+const btnHeroGetStarted = document.getElementById('btnHeroGetStarted');
+const btnCloseAuthModal = document.getElementById('btnCloseAuthModal');
+const tabLogin = document.getElementById('tabLogin');
+const tabSignUp = document.getElementById('tabSignUp');
+const loginFormContainer = document.getElementById('loginFormContainer');
+const signUpFormContainer = document.getElementById('signUpFormContainer');
+const loginForm = document.getElementById('loginForm');
+const signUpForm = document.getElementById('signUpForm');
+const authErrorMsg = document.getElementById('authErrorMsg');
+const btnLogout = document.getElementById('btnLogout');
+
 // Initial Setup on load
 document.addEventListener('DOMContentLoaded', async () => {
     loadSettingsFromStorage();
+    checkAuthSession();
     await fetchDashboardData();
     setupEventListeners();
     initializeSelectors();
-    updateDashboard();
+    
+    // Only compile dashboard visuals if currently logged in
+    if (localStorage.getItem('edu_logged_in') === 'true') {
+        updateDashboard();
+    }
 });
+
+// Check mock auth session state
+function checkAuthSession() {
+    const isLoggedIn = localStorage.getItem('edu_logged_in') === 'true';
+    if (isLoggedIn) {
+        landingPage.style.display = 'none';
+        dashboardPage.style.display = 'block';
+    } else {
+        landingPage.style.display = 'block';
+        dashboardPage.style.display = 'none';
+    }
+}
 
 // Load settings from local storage
 function loadSettingsFromStorage() {
@@ -159,24 +192,44 @@ async function fetchDashboardData() {
         applyFilters();
     } catch (error) {
         console.error("Error loading dashboard data:", error);
-        alert("Error loading cost data. Please verify the backend database!");
     }
 }
 
 // Bind UI controls and event listeners
 function setupEventListeners() {
-    // Search suggestions events
+    // ----------------------------------------------------
+    // User Authentication Event Listeners
+    // ----------------------------------------------------
+    btnNavSignIn.addEventListener('click', () => showAuthModal('login'));
+    btnHeroGetStarted.addEventListener('click', () => showAuthModal('signup'));
+    btnCloseAuthModal.addEventListener('click', () => authModal.classList.remove('active'));
+    
+    tabLogin.addEventListener('click', () => toggleAuthTab('login'));
+    tabSignUp.addEventListener('click', () => toggleAuthTab('signup'));
+    
+    loginForm.addEventListener('submit', handleLoginSubmit);
+    signUpForm.addEventListener('submit', handleSignUpSubmit);
+    btnLogout.addEventListener('click', handleLogout);
+
+    // Dynamic Validation Listeners
+    const authInputs = authModal.querySelectorAll('.form-control');
+    authInputs.forEach(input => {
+        input.addEventListener('input', () => validateField(input));
+        input.addEventListener('focusout', () => validateField(input));
+    });
+
+    // ----------------------------------------------------
+    // Dashboard Filter Event Listeners
+    // ----------------------------------------------------
     txtSearch.addEventListener('input', handleSearchInput);
     txtSearch.addEventListener('focus', handleSearchInput);
     
-    // Hide suggestions on outside click
     document.addEventListener('click', (e) => {
         if (e.target !== txtSearch && e.target !== searchSuggestions) {
             searchSuggestions.style.display = 'none';
         }
     });
 
-    // Filter controls
     selCountry.addEventListener('change', () => { currentPage = 1; updateDashboard(); });
     selLevel.addEventListener('change', () => { currentPage = 1; saveSettingsToStorage(); updateDashboard(); });
     
@@ -249,7 +302,146 @@ function setupEventListeners() {
     btnCrudDelete.addEventListener('click', handleDeleteCrud);
 }
 
+// ----------------------------------------------------
+// User Authentication Helper Functions
+// ----------------------------------------------------
+function showAuthModal(tabMode) {
+    authErrorMsg.style.display = 'none';
+    authModal.classList.add('active');
+    
+    // Reset borders
+    const inputs = authModal.querySelectorAll('.form-control');
+    inputs.forEach(el => {
+        el.className = 'form-control';
+        el.value = '';
+    });
+    
+    toggleAuthTab(tabMode);
+}
+
+function toggleAuthTab(tabMode) {
+    authErrorMsg.style.display = 'none';
+    if (tabMode === 'login') {
+        tabLogin.classList.add('active');
+        tabSignUp.classList.remove('active');
+        loginFormContainer.classList.add('active');
+        signUpFormContainer.classList.remove('active');
+    } else {
+        tabSignUp.classList.add('active');
+        tabLogin.classList.remove('active');
+        signUpFormContainer.classList.add('active');
+        loginFormContainer.classList.remove('active');
+    }
+}
+
+// Validate field input styles
+function validateField(input) {
+    if (input.required && !input.value.trim()) {
+        input.classList.add('input-invalid');
+        input.classList.remove('input-valid');
+        return false;
+    }
+    
+    if (input.type === 'email') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(input.value.trim())) {
+            input.classList.add('input-invalid');
+            input.classList.remove('input-valid');
+            return false;
+        }
+    }
+    
+    if (input.id === 'txtSignUpPassword' && input.value.length < 6) {
+        input.classList.add('input-invalid');
+        input.classList.remove('input-valid');
+        return false;
+    }
+
+    input.classList.add('input-valid');
+    input.classList.remove('input-invalid');
+    return true;
+}
+
+// Handle login submit mock flow
+function handleLoginSubmit(e) {
+    e.preventDefault();
+    authErrorMsg.style.display = 'none';
+    
+    const emailInput = document.getElementById('txtLoginEmail');
+    const passInput = document.getElementById('txtLoginPassword');
+    
+    const isEmailOk = validateField(emailInput);
+    const isPassOk = validateField(passInput);
+    
+    if (!isEmailOk || !isPassOk) {
+        showAuthError("Please fill in all email and password parameters correctly.");
+        return;
+    }
+    
+    // Mock successful authentication
+    executeMockAuthSuccess();
+}
+
+// Handle sign up submit mock flow
+function handleSignUpSubmit(e) {
+    e.preventDefault();
+    authErrorMsg.style.display = 'none';
+    
+    const nameInput = document.getElementById('txtSignUpName');
+    const emailInput = document.getElementById('txtSignUpEmail');
+    const passInput = document.getElementById('txtSignUpPassword');
+    
+    const isNameOk = validateField(nameInput);
+    const isEmailOk = validateField(emailInput);
+    const isPassOk = validateField(passInput);
+    
+    if (!isNameOk || !isEmailOk || !isPassOk) {
+        showAuthError("Please fill in all registration fields correctly.");
+        return;
+    }
+
+    if (passInput.value.length < 6) {
+        showAuthError("Password must be at least 6 characters long.");
+        return;
+    }
+    
+    executeMockAuthSuccess();
+}
+
+function showAuthError(msg) {
+    authErrorMsg.textContent = msg;
+    authErrorMsg.style.display = 'block';
+}
+
+function executeMockAuthSuccess() {
+    localStorage.setItem('edu_logged_in', 'true');
+    authModal.classList.remove('active');
+    
+    // Smooth transition
+    landingPage.style.display = 'none';
+    dashboardPage.style.display = 'block';
+    
+    // Trigger dashboard updates
+    updateDashboard();
+}
+
+// Handle logout click
+function handleLogout() {
+    localStorage.removeItem('edu_logged_in');
+    
+    // Clear selections
+    selectedCompareIds = [];
+    compareDrawer.classList.remove('active');
+    
+    landingPage.style.display = 'block';
+    dashboardPage.style.display = 'none';
+    
+    resetFilters();
+}
+
+// ----------------------------------------------------
 // Search Suggestions Autocomplete Renderer
+// ----------------------------------------------------
 function handleSearchInput() {
     const val = txtSearch.value.trim().toLowerCase();
     
@@ -262,7 +454,6 @@ function handleSearchInput() {
         return;
     }
 
-    // Get unique matched university names
     const matchedUnis = [...new Set(allData
         .map(item => item.University)
         .filter(uniName => uniName.toLowerCase().includes(val))
@@ -274,9 +465,8 @@ function handleSearchInput() {
         return;
     }
 
-    // Render suggestions
     searchSuggestions.innerHTML = '';
-    const itemsToShow = matchedUnis.slice(0, 8); // Limit to top 8 suggestions
+    const itemsToShow = matchedUnis.slice(0, 8);
 
     itemsToShow.forEach(uni => {
         const div = document.createElement('div');
@@ -294,7 +484,6 @@ function handleSearchInput() {
 
     searchSuggestions.style.display = 'block';
     
-    // Perform standard filtering concurrently on input
     currentPage = 1;
     saveSettingsToStorage();
     updateDashboard();

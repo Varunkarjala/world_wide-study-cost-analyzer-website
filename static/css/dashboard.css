@@ -844,3 +844,308 @@ input[type="checkbox"].table-checkbox {
     background: #4f46e5;
     box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
 }
+
+/* LANDING PAGE LAYOUT & SECTIONS */
+.landing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 100px 0 80px 0;
+    text-align: center;
+    position: relative;
+}
+
+.hero-badge {
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 24px;
+}
+
+.hero-section h2 {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+@media (max-width: 768px) {
+    .hero-section h2 {
+        font-size: 2.2rem;
+    }
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 650px;
+    margin: 0 auto 36px auto;
+    line-height: 1.6;
+}
+
+.hero-cta-group {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.btn-large {
+    padding: 14px 32px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+/* Features Grid */
+.features-section {
+    padding: 60px 0;
+    border-top: 1px solid var(--glass-border);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.section-header h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.section-header p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+}
+
+.feature-card {
+    text-align: left;
+    padding: 32px;
+}
+
+.feature-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: var(--color-primary);
+    font-size: 1.25rem;
+}
+
+.feature-card h4 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.feature-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Testimonials Section */
+.testimonials-section {
+    padding: 60px 0 100px 0;
+    border-top: 1px solid var(--glass-border);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.testimonial-card {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.testimonial-text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+.testimonial-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.testimonial-avatar {
+    width: 36px;
+    height: 36px;
+    background: #1e293b;
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-secondary);
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.testimonial-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.testimonial-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* Footer Section */
+footer.landing-footer {
+    border-top: 1px solid var(--glass-border);
+    padding: 48px 0;
+    background: rgba(5, 7, 13, 0.6);
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .footer-content {
+        flex-direction: row;
+    }
+}
+
+.footer-brand {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.footer-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: var(--transition-smooth);
+}
+
+.footer-links a:hover {
+    color: var(--text-primary);
+}
+
+.footer-copyright {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* FRONTEND USER AUTHENTICATION & MODAL */
+.auth-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--glass-border);
+    margin-bottom: 24px;
+}
+
+.auth-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    border-bottom: 2px solid transparent;
+}
+
+.auth-tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.auth-form-container {
+    display: none;
+}
+
+.auth-form-container.active {
+    display: block;
+}
+
+.form-group-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.form-group-auth label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.auth-error-msg {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    margin-bottom: 16px;
+    display: none;
+}
+
+/* Validation Feedback Styles */
+.form-control.input-valid {
+    border-color: var(--color-accent) !important;
+}
+
+.form-control.input-invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 5px rgba(239, 68, 68, 0.15);
+}
+

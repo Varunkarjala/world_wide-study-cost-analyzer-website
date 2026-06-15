@@ -13,394 +13,562 @@
 </head>
 <body>
 
-    <!-- Header Navigation -->
-    <header>
-        <div class="nav-container">
-            <a href="/" class="brand">
-                <div class="brand-dot"></div>
-                <h1>EduCosts<span>Explorer</span></h1>
-            </a>
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <span class="badge"><i class="fa-solid fa-database"></i> Connected</span>
-                <span class="badge" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.1); color: #34d399;"><i class="fa-solid fa-bolt"></i> Live Feed</span>
+    <!-- ========================================================= -->
+    <!-- 1. DASHBOARD PAGE WRAPPER (Visible after Mock Auth login) -->
+    <!-- ========================================================= -->
+    <div id="dashboardPage" style="display: none;">
+        <!-- Header Navigation -->
+        <header>
+            <div class="nav-container">
+                <a href="/" class="brand">
+                    <div class="brand-dot"></div>
+                    <h1>EduCosts<span>Explorer</span></h1>
+                </a>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <span class="badge"><i class="fa-solid fa-database"></i> Connected</span>
+                    <span class="badge" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.1); color: #34d399;"><i class="fa-solid fa-bolt"></i> Live Feed</span>
+                    <!-- Logout action -->
+                    <button id="btnLogout" class="btn-action btn-danger" style="padding: 4px 10px; font-size: 0.75rem;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Container -->
+        <div class="dashboard-container">
+            
+            <!-- Sidebar Filters -->
+            <aside class="sidebar glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; margin-bottom: 8px;">
+                    <h3 style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--text-primary);"><i class="fa-solid fa-sliders"></i> Filters</h3>
+                    <button id="btnClearFilters" class="btn-action" style="padding: 2px 6px; border-radius: 4px; font-size: 0.65rem;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+
+                <!-- Search input with suggestions dropdown -->
+                <div class="filter-group">
+                    <label for="txtSearch"><i class="fa-solid fa-magnifying-glass"></i> Search University</label>
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="txtSearch" class="form-control" placeholder="Type university name..." autocomplete="off">
+                    </div>
+                    <div id="searchSuggestions" class="search-suggestions-container"></div>
+                </div>
+
+                <!-- Country Dropdown -->
+                <div class="filter-group">
+                    <label for="selCountry"><i class="fa-solid fa-earth-americas"></i> Country</label>
+                    <select id="selCountry" class="form-control">
+                        <option value="All">All Countries</option>
+                        <!-- Populate dynamically -->
+                    </select>
+                </div>
+
+                <!-- Study Level Selection -->
+                <div class="filter-group">
+                    <label for="selLevel"><i class="fa-solid fa-graduation-cap"></i> Level of Study</label>
+                    <select id="selLevel" class="form-control">
+                        <option value="All">All Levels</option>
+                        <option value="Bachelor">Bachelor</option>
+                        <option value="Master">Master</option>
+                        <option value="PhD">PhD</option>
+                    </select>
+                </div>
+
+                <!-- Tuition Budget range slider -->
+                <div class="filter-group">
+                    <div style="display: flex; justify-content: space-between;">
+                        <label for="rangeTuition"><i class="fa-solid fa-dollar-sign"></i> Max Tuition</label>
+                        <span id="lblTuitionVal" style="font-size: 0.75rem; font-weight: 600; color: var(--color-primary);">$60,000</span>
+                    </div>
+                    <div class="range-slider-container">
+                        <input type="range" id="rangeTuition" min="0" max="60000" step="1000" value="60000">
+                        <div class="range-values">
+                            <span>$0</span>
+                            <span>$60k</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rent range slider -->
+                <div class="filter-group">
+                    <div style="display: flex; justify-content: space-between;">
+                        <label for="rangeRent"><i class="fa-solid fa-house-chimney"></i> Max Rent</label>
+                        <span id="lblRentVal" style="font-size: 0.75rem; font-weight: 600; color: var(--color-secondary);">$2,500</span>
+                    </div>
+                    <div class="range-slider-container">
+                        <input type="range" id="rangeRent" min="0" max="2500" step="100" value="2500">
+                        <div class="range-values">
+                            <span>$0</span>
+                            <span>$2.5k</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Target Annual Budget slider for Affordability Scores -->
+                <div class="filter-group" style="border-top: 1px solid var(--glass-border); padding-top: 16px; margin-top: 8px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <label for="rangeBudget"><i class="fa-solid fa-scale-unbalanced-hover"></i> Target Budget</label>
+                        <span id="lblBudgetVal" style="font-size: 0.75rem; font-weight: 600; color: var(--color-accent);">$45,000</span>
+                    </div>
+                    <div class="range-slider-container">
+                        <input type="range" id="rangeBudget" min="5000" max="80000" step="1000" value="45000">
+                        <div class="range-values">
+                            <span>$5k</span>
+                            <span>$80k</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Info Badge -->
+                <div style="margin-top: 10px; padding: 12px; background: rgba(255, 255, 255, 0.01); border-radius: 8px; border: 1px solid var(--glass-border);">
+                    <p style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.4;">
+                        <i class="fa-solid fa-circle-info" style="color: var(--color-secondary); margin-right: 4px;"></i> 
+                        Type in the Search input to autocomplete selection options.
+                    </p>
+                </div>
+            </aside>
+
+            <!-- Main Dashboard View -->
+            <main class="main-content">
+                
+                <!-- KPI Summary Cards -->
+                <section class="kpi-grid">
+                    <div class="glass-card kpi-card">
+                        <span class="kpi-title"><i class="fa-solid fa-building-columns"></i> Universities</span>
+                        <span class="kpi-value" id="kpiUniversities">0</span>
+                        <span class="kpi-sub" id="kpiUniversitiesSub">Matched selection</span>
+                    </div>
+                    <div class="glass-card kpi-card">
+                        <span class="kpi-title"><i class="fa-solid fa-money-bill-wave"></i> Avg Tuition</span>
+                        <span class="kpi-value" id="kpiTuition">$0</span>
+                        <span class="kpi-sub">Per academic year</span>
+                    </div>
+                    <div class="glass-card kpi-card">
+                        <span class="kpi-title"><i class="fa-solid fa-house"></i> Avg Rent</span>
+                        <span class="kpi-value" id="kpiRent">$0</span>
+                        <span class="kpi-sub">Monthly room fee</span>
+                    </div>
+                    <div class="glass-card kpi-card">
+                        <span class="kpi-title"><i class="fa-solid fa-coins"></i> Avg Visa & Ins</span>
+                        <span class="kpi-value" id="kpiFees">$0</span>
+                        <span class="kpi-sub">Annual average</span>
+                    </div>
+                </section>
+
+                <!-- Visualization Section -->
+                <section class="charts-grid">
+                    <!-- Bar Chart -->
+                    <div class="glass-card">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <h2>Tuition Cost Profiles</h2>
+                                <p>Average tuition fees grouped by country or program</p>
+                            </div>
+                            <span class="badge" style="font-size: 0.65rem;"><i class="fa-solid fa-chart-column"></i> USD ($)</span>
+                        </div>
+                        <div class="chart-canvas-wrapper">
+                            <canvas id="tuitionBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Scatter Chart -->
+                    <div class="glass-card">
+                        <div class="chart-header">
+                            <div class="chart-title">
+                                <h2>Macroeconomic Correlation</h2>
+                                <p>Overall Cost-of-Living Index vs Monthly Rent USD</p>
+                            </div>
+                            <span class="badge" style="font-size: 0.65rem;"><i class="fa-solid fa-chart-line"></i> Indices</span>
+                        </div>
+                        <div class="chart-canvas-wrapper">
+                            <canvas id="rentScatterChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Search Table View -->
+                <section class="glass-card table-section">
+                    <div class="table-header">
+                        <div class="table-title">
+                            <h2>University Finder & Cost Comparison</h2>
+                            <p>Browse matched courses, tuition, and living costs in local indices</p>
+                        </div>
+                        <button id="btnAddNewCourse" class="btn-action btn-success" style="padding: 6px 12px; font-size: 0.75rem;"><i class="fa-solid fa-plus"></i> Add Course</button>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px; text-align: center;"><input type="checkbox" id="chkSelectAll" class="table-checkbox"></th>
+                                    <th id="th-University" class="sort-active" onclick="handleSort('University')">University <i class="fa-solid fa-sort-up"></i></th>
+                                    <th id="th-Country" onclick="handleSort('Country')">Country <i class="fa-solid fa-sort"></i></th>
+                                    <th id="th-Program" onclick="handleSort('Program')">Program <i class="fa-solid fa-sort"></i></th>
+                                    <th id="th-Level" onclick="handleSort('Level')">Level <i class="fa-solid fa-sort"></i></th>
+                                    <th style="width: 100px;">Affordability</th>
+                                    <th id="th-Tuition_USD" style="text-align: right;" onclick="handleSort('Tuition_USD')">Tuition (Yr) <i class="fa-solid fa-sort"></i></th>
+                                    <th id="th-Rent_USD" style="text-align: right;" onclick="handleSort('Rent_USD')">Rent (Mo) <i class="fa-solid fa-sort"></i></th>
+                                    <th style="text-align: center; width: 140px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="universityTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination Footer -->
+                    <div class="pagination">
+                        <span class="pagination-text" id="lblPaginationText">Showing 0 to 0 of 0 universities</span>
+                        <div class="pagination-controls">
+                            <button id="btnPrevPage" class="btn-pagination" disabled><i class="fa-solid fa-angle-left"></i></button>
+                            <button id="btnNextPage" class="btn-pagination" disabled><i class="fa-solid fa-angle-right"></i></button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Cost Estimator Widget -->
+                <section class="glass-card">
+                    <div class="chart-header" style="border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; margin-bottom: 20px;">
+                        <div class="chart-title">
+                            <h2><i class="fa-solid fa-calculator" style="color: var(--color-primary);"></i> Smart Budget Estimator</h2>
+                            <p>Simulate your total higher education expense profile including visa, insurance, and living costs</p>
+                        </div>
+                    </div>
+
+                    <div class="calculator-layout">
+                        <!-- Inputs -->
+                        <div class="calc-inputs">
+                            <div class="filter-group">
+                                <label for="selCalcUniversity">Select University & Program</label>
+                                <select id="selCalcUniversity" class="form-control">
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="calcDuration">Duration of Study (Years)</label>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <input type="range" id="calcDuration" min="1" max="6" step="0.5" value="2" style="flex: 1;">
+                                    <span id="lblCalcDurationVal" style="font-size: 0.85rem; font-weight: 600; color: var(--color-primary); width: 60px; text-align: right;">2 Years</span>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <label for="calcExchangeRate">Simulated FX Converter</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <select id="selCalcCurrency" class="form-control" style="flex: 1;">
+                                        <option value="USD">USD ($)</option>
+                                        <option value="LOCAL">University Local Currency</option>
+                                    </select>
+                                </div>
+                                <span id="lblExchangeInfo" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;"></span>
+                            </div>
+                        </div>
+
+                        <!-- Breakdown Result panel -->
+                        <div class="calc-result-panel" style="flex-direction: row; gap: 24px; align-items: center;">
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
+                                <div class="cost-breakdown-list">
+                                    <div class="cost-item">
+                                        <span class="cost-item-label">
+                                            <span class="cost-dot" style="background: #6366f1;"></span> Tuition Fees
+                                        </span>
+                                        <span class="cost-item-val" id="calcTuitionTotal">$0</span>
+                                    </div>
+                                    <div class="cost-item">
+                                        <span class="cost-item-label">
+                                            <span class="cost-dot" style="background: #38bdf8;"></span> Monthly Rent
+                                        </span>
+                                        <span class="cost-item-val" id="calcRentTotal">$0</span>
+                                    </div>
+                                    <div class="cost-item">
+                                        <span class="cost-item-label">
+                                            <span class="cost-dot" style="background: #f59e0b;"></span> Student Visa Fee
+                                        </span>
+                                        <span class="cost-item-val" id="calcVisaFee">$0</span>
+                                    </div>
+                                    <div class="cost-item">
+                                        <span class="cost-item-label">
+                                            <span class="cost-dot" style="background: #10b981;"></span> Health Insurance
+                                        </span>
+                                        <span class="cost-item-val" id="calcInsuranceTotal">$0</span>
+                                    </div>
+                                </div>
+
+                                <!-- Combined Grand Total -->
+                                <div class="total-budget-card" style="margin-top: 4px;">
+                                    <p class="total-budget-label">Total Estimated Budget</p>
+                                    <h3 class="total-budget-value" id="calcGrandTotal">$0</h3>
+                                </div>
+                            </div>
+
+                            <!-- Doughnut Chart Container -->
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 150px;">
+                                <div style="position: relative; width: 120px; height: 120px;">
+                                    <canvas id="breakdownDoughnutChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <!-- FLOATING COMPARE BAR BANNER -->
+        <div id="compareDrawer" class="compare-drawer">
+            <span class="compare-drawer-text" id="lblCompareCount">0 selected</span>
+            <button class="btn-action btn-primary" id="btnShowCompareModal" style="border-radius: 99px; padding: 4px 12px; font-size: 0.75rem;"><i class="fa-solid fa-shuffle"></i> Compare Now</button>
+        </div>
+
+        <!-- COMPARISON MATRIX MODAL -->
+        <div id="compareModal" class="modal-overlay">
+            <div class="modal-container" style="max-width: 800px;">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-shuffle"></i> Side-by-Side Cost Comparison</h3>
+                    <button class="btn-close" id="btnCloseCompareModal">&times;</button>
+                </div>
+                <div class="modal-body" id="compareModalBody">
+                    <!-- Dynamic columns inject here -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-action" id="btnCloseCompareModalFooter">Close</button>
+                </div>
             </div>
         </div>
-    </header>
 
-    <!-- Dashboard Container -->
-    <div class="dashboard-container">
-        
-        <!-- Sidebar Filters -->
-        <aside class="sidebar glass-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; margin-bottom: 8px;">
-                <h3 style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--text-primary);"><i class="fa-solid fa-sliders"></i> Filters</h3>
-                <button id="btnClearFilters" class="btn-action" style="padding: 2px 6px; border-radius: 4px; font-size: 0.65rem;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-            </div>
-
-            <!-- Search input with suggestions dropdown -->
-            <div class="filter-group">
-                <label for="txtSearch"><i class="fa-solid fa-magnifying-glass"></i> Search University</label>
-                <div class="search-input-wrapper">
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="text" id="txtSearch" class="form-control" placeholder="Type university name..." autocomplete="off">
+        <!-- CRUD MODAL (ADD / EDIT COURSE FORM) -->
+        <div id="crudModal" class="modal-overlay">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3 id="crudModalTitle">Add New Course</h3>
+                    <button class="btn-close" id="btnCloseCrudModal">&times;</button>
                 </div>
-                <div id="searchSuggestions" class="search-suggestions-container"></div>
-            </div>
-
-            <!-- Country Dropdown -->
-            <div class="filter-group">
-                <label for="selCountry"><i class="fa-solid fa-earth-americas"></i> Country</label>
-                <select id="selCountry" class="form-control">
-                    <option value="All">All Countries</option>
-                    <!-- Populate dynamically -->
-                </select>
-            </div>
-
-            <!-- Study Level Selection -->
-            <div class="filter-group">
-                <label for="selLevel"><i class="fa-solid fa-graduation-cap"></i> Level of Study</label>
-                <select id="selLevel" class="form-control">
-                    <option value="All">All Levels</option>
-                    <option value="Bachelor">Bachelor</option>
-                    <option value="Master">Master</option>
-                    <option value="PhD">PhD</option>
-                </select>
-            </div>
-
-            <!-- Tuition Budget range slider -->
-            <div class="filter-group">
-                <div style="display: flex; justify-content: space-between;">
-                    <label for="rangeTuition"><i class="fa-solid fa-dollar-sign"></i> Max Tuition</label>
-                    <span id="lblTuitionVal" style="font-size: 0.75rem; font-weight: 600; color: var(--color-primary);">$60,000</span>
-                </div>
-                <div class="range-slider-container">
-                    <input type="range" id="rangeTuition" min="0" max="60000" step="1000" value="60000">
-                    <div class="range-values">
-                        <span>$0</span>
-                        <span>$60k</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Rent range slider -->
-            <div class="filter-group">
-                <div style="display: flex; justify-content: space-between;">
-                    <label for="rangeRent"><i class="fa-solid fa-house-chimney"></i> Max Rent</label>
-                    <span id="lblRentVal" style="font-size: 0.75rem; font-weight: 600; color: var(--color-secondary);">$2,500</span>
-                </div>
-                <div class="range-slider-container">
-                    <input type="range" id="rangeRent" min="0" max="2500" step="100" value="2500">
-                    <div class="range-values">
-                        <span>$0</span>
-                        <span>$2.5k</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Target Annual Budget slider for Affordability Scores -->
-            <div class="filter-group" style="border-top: 1px solid var(--glass-border); padding-top: 16px; margin-top: 8px;">
-                <div style="display: flex; justify-content: space-between;">
-                    <label for="rangeBudget"><i class="fa-solid fa-scale-unbalanced-hover"></i> Target Budget</label>
-                    <span id="lblBudgetVal" style="font-size: 0.75rem; font-weight: 600; color: var(--color-accent);">$45,000</span>
-                </div>
-                <div class="range-slider-container">
-                    <input type="range" id="rangeBudget" min="5000" max="80000" step="1000" value="45000">
-                    <div class="range-values">
-                        <span>$5k</span>
-                        <span>$80k</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Info Badge -->
-            <div style="margin-top: 10px; padding: 12px; background: rgba(255, 255, 255, 0.01); border-radius: 8px; border: 1px solid var(--glass-border);">
-                <p style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.4;">
-                    <i class="fa-solid fa-circle-info" style="color: var(--color-secondary); margin-right: 4px;"></i> 
-                    Type in the Search input to autocomplete selection options.
-                </p>
-            </div>
-        </aside>
-
-        <!-- Main Dashboard View -->
-        <main class="main-content">
-            
-            <!-- KPI Summary Cards -->
-            <section class="kpi-grid">
-                <div class="glass-card kpi-card">
-                    <span class="kpi-title"><i class="fa-solid fa-building-columns"></i> Universities</span>
-                    <span class="kpi-value" id="kpiUniversities">0</span>
-                    <span class="kpi-sub" id="kpiUniversitiesSub">Matched selection</span>
-                </div>
-                <div class="glass-card kpi-card">
-                    <span class="kpi-title"><i class="fa-solid fa-money-bill-wave"></i> Avg Tuition</span>
-                    <span class="kpi-value" id="kpiTuition">$0</span>
-                    <span class="kpi-sub">Per academic year</span>
-                </div>
-                <div class="glass-card kpi-card">
-                    <span class="kpi-title"><i class="fa-solid fa-house"></i> Avg Rent</span>
-                    <span class="kpi-value" id="kpiRent">$0</span>
-                    <span class="kpi-sub">Monthly room fee</span>
-                </div>
-                <div class="glass-card kpi-card">
-                    <span class="kpi-title"><i class="fa-solid fa-coins"></i> Avg Visa & Ins</span>
-                    <span class="kpi-value" id="kpiFees">$0</span>
-                    <span class="kpi-sub">Annual average</span>
-                </div>
-            </section>
-
-            <!-- Visualization Section -->
-            <section class="charts-grid">
-                <!-- Bar Chart -->
-                <div class="glass-card">
-                    <div class="chart-header">
-                        <div class="chart-title">
-                            <h2>Tuition Cost Profiles</h2>
-                            <p>Average tuition fees grouped by country or program</p>
-                        </div>
-                        <span class="badge" style="font-size: 0.65rem;"><i class="fa-solid fa-chart-column"></i> USD ($)</span>
-                    </div>
-                    <div class="chart-canvas-wrapper">
-                        <canvas id="tuitionBarChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Scatter Chart -->
-                <div class="glass-card">
-                    <div class="chart-header">
-                        <div class="chart-title">
-                            <h2>Macroeconomic Correlation</h2>
-                            <p>Overall Cost-of-Living Index vs Monthly Rent USD</p>
-                        </div>
-                        <span class="badge" style="font-size: 0.65rem;"><i class="fa-solid fa-chart-line"></i> Indices</span>
-                    </div>
-                    <div class="chart-canvas-wrapper">
-                        <canvas id="rentScatterChart"></canvas>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Search Table View -->
-            <section class="glass-card table-section">
-                <div class="table-header">
-                    <div class="table-title">
-                        <h2>University Finder & Cost Comparison</h2>
-                        <p>Browse matched courses, tuition, and living costs in local indices</p>
-                    </div>
-                    <button id="btnAddNewCourse" class="btn-action btn-success" style="padding: 6px 12px; font-size: 0.75rem;"><i class="fa-solid fa-plus"></i> Add Course</button>
-                </div>
-                
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 40px; text-align: center;"><input type="checkbox" id="chkSelectAll" class="table-checkbox"></th>
-                                <th id="th-University" class="sort-active" onclick="handleSort('University')">University <i class="fa-solid fa-sort-up"></i></th>
-                                <th id="th-Country" onclick="handleSort('Country')">Country <i class="fa-solid fa-sort"></i></th>
-                                <th id="th-Program" onclick="handleSort('Program')">Program <i class="fa-solid fa-sort"></i></th>
-                                <th id="th-Level" onclick="handleSort('Level')">Level <i class="fa-solid fa-sort"></i></th>
-                                <th style="width: 100px;">Affordability</th>
-                                <th id="th-Tuition_USD" style="text-align: right;" onclick="handleSort('Tuition_USD')">Tuition (Yr) <i class="fa-solid fa-sort"></i></th>
-                                <th id="th-Rent_USD" style="text-align: right;" onclick="handleSort('Rent_USD')">Rent (Mo) <i class="fa-solid fa-sort"></i></th>
-                                <th style="text-align: center; width: 140px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="universityTableBody">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination Footer -->
-                <div class="pagination">
-                    <span class="pagination-text" id="lblPaginationText">Showing 0 to 0 of 0 universities</span>
-                    <div class="pagination-controls">
-                        <button id="btnPrevPage" class="btn-pagination" disabled><i class="fa-solid fa-angle-left"></i></button>
-                        <button id="btnNextPage" class="btn-pagination" disabled><i class="fa-solid fa-angle-right"></i></button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Cost Estimator Widget -->
-            <section class="glass-card">
-                <div class="chart-header" style="border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; margin-bottom: 20px;">
-                    <div class="chart-title">
-                        <h2><i class="fa-solid fa-calculator" style="color: var(--color-primary);"></i> Smart Budget Estimator</h2>
-                        <p>Simulate your total higher education expense profile including visa, insurance, and living costs</p>
-                    </div>
-                </div>
-
-                <div class="calculator-layout">
-                    <!-- Inputs -->
-                    <div class="calc-inputs">
+                <div class="modal-body">
+                    <form id="crudForm" class="form-grid">
+                        <input type="hidden" id="txtCrudId" value="">
+                        
                         <div class="filter-group">
-                            <label for="selCalcUniversity">Select University & Program</label>
-                            <select id="selCalcUniversity" class="form-control">
-                                <!-- Populated dynamically -->
+                            <label for="txtCrudUniversity">University Name *</label>
+                            <input type="text" id="txtCrudUniversity" class="form-control" required placeholder="e.g. Harvard University">
+                        </div>
+                        <div class="filter-group">
+                            <label for="txtCrudProgram">Program Name *</label>
+                            <input type="text" id="txtCrudProgram" class="form-control" required placeholder="e.g. Computer Science">
+                        </div>
+                        <div class="filter-group">
+                            <label for="txtCrudCity">City *</label>
+                            <input type="text" id="txtCrudCity" class="form-control" required placeholder="e.g. Cambridge">
+                        </div>
+                        <div class="filter-group">
+                            <label for="txtCrudCountry">Country *</label>
+                            <input type="text" id="txtCrudCountry" class="form-control" required placeholder="e.g. USA">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="selCrudLevel">Level of Study *</label>
+                            <select id="selCrudLevel" class="form-control" required>
+                                <option value="Bachelor">Bachelor</option>
+                                <option value="Master">Master</option>
+                                <option value="PhD">PhD</option>
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label for="calcDuration">Duration of Study (Years)</label>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <input type="range" id="calcDuration" min="1" max="6" step="0.5" value="2" style="flex: 1;">
-                                <span id="lblCalcDurationVal" style="font-size: 0.85rem; font-weight: 600; color: var(--color-primary); width: 60px; text-align: right;">2 Years</span>
-                            </div>
+                            <label for="txtCrudDuration">Course Duration (Years) *</label>
+                            <input type="number" id="txtCrudDuration" class="form-control" step="0.5" min="0.5" max="7" value="2" required>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="txtCrudTuition">Annual Tuition Fee (USD) *</label>
+                            <input type="number" id="txtCrudTuition" class="form-control" min="0" value="10000" required>
                         </div>
                         <div class="filter-group">
-                            <label for="calcExchangeRate">Simulated FX Converter</label>
-                            <div style="display: flex; gap: 8px;">
-                                <select id="selCalcCurrency" class="form-control" style="flex: 1;">
-                                    <option value="USD">USD ($)</option>
-                                    <option value="LOCAL">University Local Currency</option>
-                                </select>
-                            </div>
-                            <span id="lblExchangeInfo" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;"></span>
+                            <label for="txtCrudLivingIndex">Living Cost Index *</label>
+                            <input type="number" id="txtCrudLivingIndex" class="form-control" step="0.1" min="0" value="70" required>
                         </div>
-                    </div>
-
-                    <!-- Breakdown Result panel -->
-                    <div class="calc-result-panel" style="flex-direction: row; gap: 24px; align-items: center;">
-                        <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
-                            <div class="cost-breakdown-list">
-                                <div class="cost-item">
-                                    <span class="cost-item-label">
-                                        <span class="cost-dot" style="background: #6366f1;"></span> Tuition Fees
-                                    </span>
-                                    <span class="cost-item-val" id="calcTuitionTotal">$0</span>
-                                </div>
-                                <div class="cost-item">
-                                    <span class="cost-item-label">
-                                        <span class="cost-dot" style="background: #38bdf8;"></span> Monthly Rent
-                                    </span>
-                                    <span class="cost-item-val" id="calcRentTotal">$0</span>
-                                </div>
-                                <div class="cost-item">
-                                    <span class="cost-item-label">
-                                        <span class="cost-dot" style="background: #f59e0b;"></span> Student Visa Fee
-                                    </span>
-                                    <span class="cost-item-val" id="calcVisaFee">$0</span>
-                                </div>
-                                <div class="cost-item">
-                                    <span class="cost-item-label">
-                                        <span class="cost-dot" style="background: #10b981;"></span> Health Insurance
-                                    </span>
-                                    <span class="cost-item-val" id="calcInsuranceTotal">$0</span>
-                                </div>
-                            </div>
-
-                            <!-- Combined Grand Total -->
-                            <div class="total-budget-card" style="margin-top: 4px;">
-                                <p class="total-budget-label">Total Estimated Budget</p>
-                                <h3 class="total-budget-value" id="calcGrandTotal">$0</h3>
-                            </div>
+                        <div class="filter-group">
+                            <label for="txtCrudRent">Monthly Rent Cost (USD) *</label>
+                            <input type="number" id="txtCrudRent" class="form-control" min="0" value="1000" required>
                         </div>
-
-                        <!-- Doughnut Chart Container -->
-                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 150px;">
-                            <div style="position: relative; width: 120px; height: 120px;">
-                                <canvas id="breakdownDoughnutChart"></canvas>
-                            </div>
+                        <div class="filter-group">
+                            <label for="txtCrudVisa">Student Visa Fee (USD) *</label>
+                            <input type="number" id="txtCrudVisa" class="form-control" min="0" value="200" required>
                         </div>
-                    </div>
+                        
+                        <div class="filter-group">
+                            <label for="txtCrudInsurance">Annual Health Insurance (USD) *</label>
+                            <input type="number" id="txtCrudInsurance" class="form-control" min="0" value="600" required>
+                        </div>
+                        <div class="filter-group">
+                            <label for="txtCrudExchange">Exchange Rate (per USD) *</label>
+                            <input type="number" id="txtCrudExchange" class="form-control" step="0.0001" min="0.0001" value="1.0" required>
+                        </div>
+                    </form>
                 </div>
-            </section>
-
-        </main>
-    </div>
-
-    <!-- FLOATING COMPARE BAR BANNER -->
-    <div id="compareDrawer" class="compare-drawer">
-        <span class="compare-drawer-text" id="lblCompareCount">0 selected</span>
-        <button class="btn-action btn-primary" id="btnShowCompareModal" style="border-radius: 99px; padding: 4px 12px; font-size: 0.75rem;"><i class="fa-solid fa-shuffle"></i> Compare Now</button>
-    </div>
-
-    <!-- COMPARISON MATRIX MODAL -->
-    <div id="compareModal" class="modal-overlay">
-        <div class="modal-container" style="max-width: 800px;">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-shuffle"></i> Side-by-Side Cost Comparison</h3>
-                <button class="btn-close" id="btnCloseCompareModal">&times;</button>
-            </div>
-            <div class="modal-body" id="compareModalBody">
-                <!-- Dynamic columns inject here -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn-action" id="btnCloseCompareModalFooter">Close</button>
+                <div class="modal-footer">
+                    <button class="btn-action btn-danger" id="btnCrudDelete" style="display: none; margin-right: auto;"><i class="fa-solid fa-trash"></i> Delete</button>
+                    <button class="btn-action" id="btnCancelCrud">Cancel</button>
+                    <button class="btn-action btn-primary" id="btnSaveCrud"><i class="fa-solid fa-save"></i> Save</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- CRUD MODAL (ADD / EDIT COURSE FORM) -->
-    <div id="crudModal" class="modal-overlay">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 id="crudModalTitle">Add New Course</h3>
-                <button class="btn-close" id="btnCloseCrudModal">&times;</button>
+    <!-- ========================================================= -->
+    <!-- 2. LANDING PAGE VIEW CONTAINER (Default view)             -->
+    <!-- ========================================================= -->
+    <div id="landingPage">
+        <!-- Landing Header -->
+        <header>
+            <div class="nav-container">
+                <a href="/" class="brand">
+                    <div class="brand-dot"></div>
+                    <h1>EduCosts<span>Explorer</span></h1>
+                </a>
+                <div>
+                    <button id="btnNavSignIn" class="btn-action btn-primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In</button>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="crudForm" class="form-grid">
-                    <input type="hidden" id="txtCrudId" value="">
-                    
-                    <div class="filter-group">
-                        <label for="txtCrudUniversity">University Name *</label>
-                        <input type="text" id="txtCrudUniversity" class="form-control" required placeholder="e.g. Harvard University">
-                    </div>
-                    <div class="filter-group">
-                        <label for="txtCrudProgram">Program Name *</label>
-                        <input type="text" id="txtCrudProgram" class="form-control" required placeholder="e.g. Computer Science">
-                    </div>
-                    <div class="filter-group">
-                        <label for="txtCrudCity">City *</label>
-                        <input type="text" id="txtCrudCity" class="form-control" required placeholder="e.g. Cambridge">
-                    </div>
-                    <div class="filter-group">
-                        <label for="txtCrudCountry">Country *</label>
-                        <input type="text" id="txtCrudCountry" class="form-control" required placeholder="e.g. USA">
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="selCrudLevel">Level of Study *</label>
-                        <select id="selCrudLevel" class="form-control" required>
-                            <option value="Bachelor">Bachelor</option>
-                            <option value="Master">Master</option>
-                            <option value="PhD">PhD</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="txtCrudDuration">Course Duration (Years) *</label>
-                        <input type="number" id="txtCrudDuration" class="form-control" step="0.5" min="0.5" max="7" value="2" required>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="txtCrudTuition">Annual Tuition Fee (USD) *</label>
-                        <input type="number" id="txtCrudTuition" class="form-control" min="0" value="10000" required>
-                    </div>
-                    <div class="filter-group">
-                        <label for="txtCrudLivingIndex">Living Cost Index *</label>
-                        <input type="number" id="txtCrudLivingIndex" class="form-control" step="0.1" min="0" value="70" required>
-                    </div>
-                    <div class="filter-group">
-                        <label for="txtCrudRent">Monthly Rent Cost (USD) *</label>
-                        <input type="number" id="txtCrudRent" class="form-control" min="0" value="1000" required>
-                    </div>
-                    <div class="filter-group">
-                        <label for="txtCrudVisa">Student Visa Fee (USD) *</label>
-                        <input type="number" id="txtCrudVisa" class="form-control" min="0" value="200" required>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="txtCrudInsurance">Annual Health Insurance (USD) *</label>
-                        <input type="number" id="txtCrudInsurance" class="form-control" min="0" value="600" required>
-                    </div>
-                    <div class="filter-group">
-                        <label for="txtCrudExchange">Exchange Rate (per USD) *</label>
-                        <input type="number" id="txtCrudExchange" class="form-control" step="0.0001" min="0.0001" value="1.0" required>
-                    </div>
-                </form>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-section landing-container">
+            <span class="hero-badge">Worldwide cost analyzer</span>
+            <h2>Plan Your Global Higher Ed Journey Smartly</h2>
+            <p class="hero-description">Explore tuition fees, compare living costs, calculate student visas, and estimate your total academic expenditures in multiple currencies across 800+ international courses.</p>
+            <div class="hero-cta-group">
+                <button id="btnHeroGetStarted" class="btn-large btn-primary">Get Started <i class="fa-solid fa-arrow-right"></i></button>
             </div>
-            <div class="modal-footer">
-                <button class="btn-action btn-danger" id="btnCrudDelete" style="display: none; margin-right: auto;"><i class="fa-solid fa-trash"></i> Delete</button>
-                <button class="btn-action" id="btnCancelCrud">Cancel</button>
-                <button class="btn-action btn-primary" id="btnSaveCrud"><i class="fa-solid fa-save"></i> Save</button>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section landing-container" id="features">
+            <div class="section-header">
+                <h3>Designed for Future Global Students</h3>
+                <p>Unlock detailed cost transparency and make informed decisions on where to study.</p>
+            </div>
+            <div class="features-grid">
+                <div class="glass-card feature-card">
+                    <div class="feature-icon-wrapper"><i class="fa-solid fa-money-bill-wave"></i></div>
+                    <h4>Compare Tuition Fees</h4>
+                    <p>Compare annual fees for Bachelor's, Master's, and PhD programs from over 800 universities globally.</p>
+                </div>
+                <div class="glass-card feature-card">
+                    <div class="feature-icon-wrapper"><i class="fa-solid fa-calculator"></i></div>
+                    <h4>Cost of Living Calculator</h4>
+                    <p>Simulate standard monthly rent and cost-of-living indices in university cities dynamically.</p>
+                </div>
+                <div class="glass-card feature-card">
+                    <div class="feature-icon-wrapper"><i class="fa-solid fa-passport"></i></div>
+                    <h4>Visa & Insurance Estimator</h4>
+                    <p>Include mandatory student visa fees and health insurance metrics directly in your budget calculations.</p>
+                </div>
+                <div class="glass-card feature-card">
+                    <div class="feature-icon-wrapper"><i class="fa-solid fa-shuffle"></i></div>
+                    <h4>Comparison Matrix</h4>
+                    <p>Select multiple programs and compare their detailed financial metrics side-by-side.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials-section landing-container" id="about">
+            <div class="section-header">
+                <h3>What Students Say</h3>
+                <p>Real feedback from international students who planned using our calculator.</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="glass-card testimonial-card">
+                    <p class="testimonial-text">"This tool was a lifesaver. I was debating between studying in Germany or Canada, and the estimator helped me see the real difference in living costs and tuition instantly."</p>
+                    <div class="testimonial-user">
+                        <div class="testimonial-avatar">AM</div>
+                        <div>
+                            <div class="testimonial-name">Aleksei Miller</div>
+                            <div class="testimonial-meta">CS Student, Munich</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card testimonial-card">
+                    <p class="testimonial-text">"Being able to convert estimates into local currencies helped my family align on our budgeting constraints. The multi-uni compare feature is amazing."</p>
+                    <div class="testimonial-user">
+                        <div class="testimonial-avatar">SP</div>
+                        <div>
+                            <div class="testimonial-name">Sriya Patel</div>
+                            <div class="testimonial-meta">Data Science Student, Toronto</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="landing-footer">
+            <div class="landing-container footer-content">
+                <div class="footer-brand">
+                    EduCostsExplorer
+                </div>
+                <ul class="footer-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="https://github.com" target="_blank">GitHub</a></li>
+                    <li><a href="https://google.com" target="_blank">Support</a></li>
+                </ul>
+                <div class="footer-copyright">
+                    &copy; 2026 EduCostsExplorer. All rights reserved.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 3. AUTHENTICATION POPUP MODAL                             -->
+    <!-- ========================================================= -->
+    <div id="authModal" class="modal-overlay">
+        <div class="modal-container" style="max-width: 420px;">
+            <div class="modal-header" style="border-bottom: none; padding-bottom: 0;">
+                <button class="btn-close" id="btnCloseAuthModal" style="margin-left: auto;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding-top: 0;">
+                <!-- Tab headers -->
+                <div class="auth-tabs">
+                    <button id="tabLogin" class="auth-tab active">Log In</button>
+                    <button id="tabSignUp" class="auth-tab">Sign Up</button>
+                </div>
+
+                <!-- Error Alert Box -->
+                <div id="authErrorMsg" class="auth-error-msg"></div>
+
+                <!-- LOGIN VIEW -->
+                <div id="loginFormContainer" class="auth-form-container active">
+                    <form id="loginForm" novalidate>
+                        <div class="form-group-auth">
+                            <label for="txtLoginEmail">Email Address</label>
+                            <input type="email" id="txtLoginEmail" class="form-control" placeholder="name@domain.com" required>
+                        </div>
+                        <div class="form-group-auth">
+                            <label for="txtLoginPassword">Password</label>
+                            <input type="password" id="txtLoginPassword" class="form-control" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn-action btn-primary" style="width: 100%; padding: 10px; font-size: 0.85rem; margin-top: 10px;"><i class="fa-solid fa-right-to-bracket"></i> Log In</button>
+                    </form>
+                </div>
+
+                <!-- SIGN UP VIEW -->
+                <div id="signUpFormContainer" class="auth-form-container">
+                    <form id="signUpForm" novalidate>
+                        <div class="form-group-auth">
+                            <label for="txtSignUpName">Full Name</label>
+                            <input type="text" id="txtSignUpName" class="form-control" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group-auth">
+                            <label for="txtSignUpEmail">Email Address</label>
+                            <input type="email" id="txtSignUpEmail" class="form-control" placeholder="name@domain.com" required>
+                        </div>
+                        <div class="form-group-auth">
+                            <label for="txtSignUpPassword">Password</label>
+                            <input type="password" id="txtSignUpPassword" class="form-control" placeholder="Minimum 6 characters" required>
+                        </div>
+                        <button type="submit" class="btn-action btn-primary" style="width: 100%; padding: 10px; font-size: 0.85rem; margin-top: 10px;"><i class="fa-solid fa-user-plus"></i> Create Account</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
